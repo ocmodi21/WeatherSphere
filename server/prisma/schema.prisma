@@ -13,18 +13,22 @@ model WeatherSummary {
   max_temprature Float
   min_temprature Float
   dominant       String
+  day            DateTime
 
   created_at DateTime  @default(now())
-  pdated_at  DateTime? @updatedAt
+  updated_at DateTime? @updatedAt
 
-  @@id([city, created_at])
+  @@id([city, day])
 }
 
 model NotificationPreference {
   email             String @id @unique
+  city              String
   temprature        Float
   consecutive_count Int
 
   created_at DateTime  @default(now())
   updated_at DateTime? @updatedAt
+
+  @@unique([email, city])
 }

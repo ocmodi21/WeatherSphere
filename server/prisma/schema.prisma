@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model WeatherSummary {
+  city           String
+  avg_temprature Float
+  max_temprature Float
+  min_temprature Float
+  dominant       String
+
+  created_at DateTime  @default(now())
+  pdated_at  DateTime? @updatedAt
+
+  @@id([city, created_at])
+}
+
+model NotificationPreference {
+  email             String @id @unique
+  temprature        Float
+  consecutive_count Int
+
+  created_at DateTime  @default(now())
+  updated_at DateTime? @updatedAt
+}

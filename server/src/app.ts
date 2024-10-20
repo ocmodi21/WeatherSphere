@@ -16,10 +16,10 @@ app.use(express.json());
 app.use(logger);
 
 // Schedule the task to fetch weather data
-// cron.schedule("*/10 * * * *", cronjob.fetchWeatherData);
+cron.schedule("*/10 * * * *", cronjob.fetchWeatherData);
 
 // Schedule the task to roll up weather data
-// cron.schedule("0 0 * * *", cronjob.fetchRollUpWeatherData);
+cron.schedule("0 0 * * *", cronjob.fetchRollUpWeatherData);
 
 cronjob.fetchRollUpWeatherData();
 

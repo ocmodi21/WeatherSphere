@@ -6,6 +6,7 @@ import cron from "node-cron";
 
 import logger from "./middlewares/logger/logger";
 import cronjob from "./utils/cronjob";
+import weatherRoutes from "./routes/weather.route";
 
 dotenv.config();
 
@@ -21,7 +22,8 @@ cron.schedule("*/10 * * * *", cronjob.fetchWeatherData);
 // Schedule the task to roll up weather data
 cron.schedule("0 0 * * *", cronjob.fetchRollUpWeatherData);
 
-cronjob.fetchRollUpWeatherData();
+// api
+app.use("/api/v1/weather", weatherRoutes);
 
 // Connect to MongoDB
 mongoose

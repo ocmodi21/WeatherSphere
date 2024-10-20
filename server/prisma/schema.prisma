@@ -22,13 +22,13 @@ model WeatherSummary {
 }
 
 model NotificationPreference {
-  email             String @id @unique
+  email             String
   city              String
   temprature        Float
-  consecutive_count Int
+  consecutive_count Int?   @default(1)
 
   created_at DateTime  @default(now())
   updated_at DateTime? @updatedAt
 
-  @@unique([email, city])
+  @@id([email, city])
 }

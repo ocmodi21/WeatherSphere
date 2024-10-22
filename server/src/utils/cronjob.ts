@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 import WeatherModel from "../models/weather.model";
 import { CITIES } from "./cities";
+import EmailManager from "./email-manager";
 
 const prisma = new PrismaClient();
 
@@ -28,6 +29,24 @@ class CronjobManager {
 
         // Insert the weather data for the current city into the database
         await WeatherModel.create(newWeatherData);
+
+        // Fetch all users who have set up notification preferences
+        const users = await prisma.notificationPreference.findMany();
+
+        // Send emails to all users concurrently
+        // Promise.all ensures that all email sending operations run concurrently rather than one after another
+        await Promise.all(
+          users.map((user) =>
+            // Send an email to each user with their respective email and city details
+            EmailManager.sendEmail(
+              user.email,
+              user.city,
+              newWeatherData.temp,
+              newWeatherData.main,
+              newWeatherData.feels_like
+            )
+          )
+        );
       }
     } catch (error) {
       console.error("Error while fetching city's weather data:", error);
@@ -116,7 +135,6 @@ class CronjobManager {
               prismaError
             );
           }
-          
         } else {
           console.warn(
             `No weather data found for city: ${city} on ${

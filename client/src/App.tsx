@@ -1,9 +1,8 @@
-import './index.css'
+import "./index.css";
+import WeatherDashboard from "./pages/Dashboard";
 
 const App = () => {
-  return (
-    <div>App</div>
-  )
-}
+  return <WeatherDashboard />;
+};
 
-export default App
+export default App;

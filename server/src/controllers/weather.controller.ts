@@ -22,6 +22,16 @@ class WeatherController {
         {
           $replaceRoot: { newRoot: "$latestEntry" }, // Replace root with latest entry
         },
+        {
+          $project: {
+            _id: 0,
+            city: 1,
+            temp: 1,
+            main: 1,
+            feels_like: 1,
+            dt: 1,
+          },
+        },
       ]);
 
       if (latestWeatherEntries.length === 0) {
@@ -70,6 +80,14 @@ class WeatherController {
                   city: entry.city,
                   day: entry._max.day,
                 },
+                select: {
+                  city: true,
+                  avg_temprature: true,
+                  max_temprature: true,
+                  min_temprature: true,
+                  dominant: true,
+                  day: true,
+                },
               });
             } catch (findError) {
               // Log error and return a null entry if there's an issue fetching
@@ -105,63 +123,6 @@ class WeatherController {
       // Handle any unexpected errors
       return res.status(500).json({
         message: "An error occurred while fetching the weather data.",
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
-    }
-  }
-
-  async setNotificationPreference(req: Request, res: Response): Promise<any> {
-    // Extracting the necessary fields from the request body
-    const { email, city, temprature, consecutive_count } = req.body;
-
-    try {
-      // Checking if a preference already exists for the given email and city
-      const preferenceExsist = await prisma.notificationPreference.findFirst({
-        where: {
-          email,
-          city,
-        },
-      });
-
-      // If a preference exists, return a 400 error with a relevant message
-      if (preferenceExsist) {
-        return res.status(400).json({
-          message:
-            "Notification preference already exists for the specified email and city.",
-        });
-      }
-
-      // Creating an object to hold the notification preference details
-      const preferenceObject = {
-        email: email,
-        city: city,
-        temprature: temprature,
-        consecutive_count: consecutive_count,
-      };
-
-      // Attempting to create a new notification preference in the database
-      const preference = await prisma.notificationPreference.create({
-        data: preferenceObject,
-      });
-
-      // If no preference is created, return a 404 error
-      // This check may not be necessary here since create() should always return the created entry
-      if (!preference) {
-        return res.status(404).json({
-          message:
-            "No valid weather data found for the specified city. Please verify your preferences.",
-        });
-      }
-
-      // Returning a success response with the created preference data
-      return res.status(201).json({
-        message: "Notification preference set successfully.",
-        data: preference,
-      });
-    } catch (error) {
-      // Handling unexpected errors during the database operation
-      return res.status(500).json({
-        message: "An error occurred while setting the notification preference.",
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }

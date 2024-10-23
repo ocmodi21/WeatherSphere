@@ -5,5 +5,6 @@ const router = Router();
 
 router.get("/currentWeather", weatherController.getCurrentWeatherData);
 router.get("/weatherSummary", weatherController.getWeatherSummaryData);
+router.get("/sendEmail", weatherController.sendEmail);
 
 export default router;

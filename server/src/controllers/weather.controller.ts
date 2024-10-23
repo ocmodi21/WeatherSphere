@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { PrismaClient, WeatherSummary } from "@prisma/client";
 
 import WeatherModel from "../models/weather.model";
+import emailManager from "../utils/email-manager";
 
 const prisma = new PrismaClient();
 
@@ -123,6 +124,47 @@ class WeatherController {
       // Handle any unexpected errors
       return res.status(500).json({
         message: "An error occurred while fetching the weather data.",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
+
+  async sendEmail(req: Request, res: Response): Promise<any> {
+    // Extract email data from the request body
+    const { email, cityName, temperature, weatherCondition, feelsLike } =
+      req.body;
+
+    try {
+      // Check if required fields are provided
+      if (
+        !email ||
+        !cityName ||
+        !temperature ||
+        !weatherCondition ||
+        !feelsLike
+      ) {
+        return res.status(400).json({
+          message: "Missing required email or weather data.",
+        });
+      }
+
+      // Send the email using the emailManager service
+      await emailManager.sendEmail(
+        email,
+        cityName,
+        temperature,
+        weatherCondition,
+        feelsLike
+      );
+
+      // If email is successfully sent, respond with success message
+      return res.status(200).json({
+        message: "Email sent successfully.",
+      });
+    } catch (error) {
+      // Handle any unexpected errors
+      return res.status(500).json({
+        message: "An error occurred while sending the email.",
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }

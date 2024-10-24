@@ -39,7 +39,7 @@ const UserPreference = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="city-select" className="text-purple-300 mb-2 block">
               Select City
@@ -83,7 +83,10 @@ const UserPreference = ({
               </SelectContent>
             </Select>
           </div>
-          <NotificationSettings temperatureUnit={temperatureUnit} />
+          <NotificationSettings
+            selectedCity={selectedCity}
+            temperatureUnit={temperatureUnit}
+          />
         </div>
       </CardContent>
     </Card>

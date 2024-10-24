@@ -13,6 +13,7 @@ export default function useFetch(endpoint: string) {
 
       return await res.json();
     },
+    refetchInterval: 660000,
   });
 
   return { data, error, isLoading };

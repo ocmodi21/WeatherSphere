@@ -9,6 +9,8 @@ export const WeatherIcon = ({ condition }: { condition: string }) => {
     case "Rain":
       return <CloudRain className="w-10 h-10 text-blue-400" />;
     case "Haze":
+    case "Mist":
+    case "Smoke":
       return <CloudFog className="w-10 h-10 text-gray-400" />;
     default:
       return <Sun className="w-10 h-10 text-yellow-300" />;

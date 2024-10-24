@@ -12,7 +12,7 @@ import {
 } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { WeatherSummary } from "@/pages/Dashboard";
-import { ChartContainer } from "./ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "./ui/chart";
 
 interface DailySummaryProps {
   selectedCity: string;
@@ -80,6 +80,10 @@ const DailySummary = ({
               />
               <YAxis stroke="#9CA3AF" tick={{ fontSize: 12 }} width={30} />
               <Legend wrapperStyle={{ fontSize: "12px" }} />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
               <Line
                 type="monotone"
                 dataKey="avgTemp"

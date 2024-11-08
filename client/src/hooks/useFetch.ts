@@ -4,7 +4,7 @@ export default function useFetch(endpoint: string) {
   const { data, error, isLoading } = useQuery({
     queryKey: [endpoint],
     queryFn: async () => {
-      const URL = `${import.meta.env.VITE_API_BASE_URL}/${endpoint}`;
+      const URL = `${import.meta.env.VITE_BASE_URL}/${endpoint}`;
       const res = await fetch(URL);
 
       if (!res.ok) {

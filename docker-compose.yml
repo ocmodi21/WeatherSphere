@@ -1,0 +1,96 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: "postgres:alpine"
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+    ports:
+      - $POSTGRES_LOCAL_PORT:$POSTGRES_DOCKER_PORT
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_USER
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_PASSWORD
+    ports:
+      - $MONGO_LOCAL_PORT:$MONGO_DOCKER_PORT
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: weathersphere-server
+    working_dir: /WeatherSphere
+    environment:
+      - PORT=$PORT
+      - DATABASE_URL=$DATABASE_URL
+      - MONGO_URL=$MONGO_URL
+      - BASE_URL=$BASE_URL
+      - OPEN_WEATHER_API_KEY=$OPEN_WEATHER_API_KEY
+      - AUTH_PASS=$AUTH_PASS
+      - AUTH_USER=$AUTH_USER
+      - HOST=$HOST
+      - SERVICE=$SERVICE
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    depends_on:
+      - mongo
+      - postgres
+    networks:
+      - app-network
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: weathersphere-client
+    working_dir: /WeatherSphere
+    environment:
+      - VITE_BASE_URL=$VITE_BASE_URL
+    ports:
+      - $VITE_LOCAL_PORT:$VITE_DOCKER_PORT
+    depends_on:
+      - server
+    networks:
+      - app-network
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: weathersphere-nginx
+    restart: always
+    ports:
+      - $NGINX_LOCAL_PORT:$NGINX_DOCKER_PORT
+    networks:
+      - app-network
+    depends_on:
+      - server
+      - client
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
+  postgres-data:

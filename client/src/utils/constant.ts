@@ -2,7 +2,7 @@ export const CITIES = [
   "Delhi",
   "Mumbai",
   "Chennai",
-  "Bangalore",
+  "Bengaluru",
   "Kolkata",
   "Hyderabad",
 ];

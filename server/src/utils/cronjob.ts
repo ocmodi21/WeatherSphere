@@ -36,8 +36,13 @@ class CronjobManager {
 
   async fetchRollUpWeatherData() {
     const date = new Date();
-    const startOfDay = new Date(date.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+  
+  // Set the date to one day before the current date
+  date.setDate(date.getDate() - 1);
+
+  // Define start and end of the previous day
+  const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+  const endOfDay = new Date(date.setHours(23, 59, 59, 999));
 
     try {
       for (const city of CITIES) {
